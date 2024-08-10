@@ -14,12 +14,15 @@ def get_transform():
     """
     return {
         'train': transforms.Compose([
+            # make sure we have three channels
+            transforms.Grayscale(num_output_channels=3),
             transforms.RandomRotation(10),
             transforms.RandomAffine(degrees=0, translate=(0.1, 0.1)),
             transforms.ToTensor(),
             transforms.Normalize((0.5,), (0.5,))
         ]),
         'val': transforms.Compose([
+            transforms.Grayscale(num_output_channels=3),
             transforms.ToTensor(),
             transforms.Normalize((0.5,), (0.5,))
         ])
@@ -35,13 +38,10 @@ def load_data(batch_size: int = 32, num_workers: int = 0):
     :return: Dataloaders for training and validation.
     """
 
-    transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize((0.5,), (0.5,))
-    ])
+    transform = get_transform()
 
-    train_dataset = datasets.MNIST(root='./data', train=True, download=True, transform=transform)
-    val_dataset = datasets.MNIST(root='./data', train=False, download=True, transform=transform)
+    train_dataset = datasets.MNIST(root='./data', train=True, download=True, transform=transform['train'])
+    val_dataset = datasets.MNIST(root='./data', train=False, download=True, transform=transform['val'])
 
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, num_workers=num_workers)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, num_workers=num_workers)

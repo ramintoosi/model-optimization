@@ -105,7 +105,6 @@ def train(
             if writer is not None:
                 writer.add_scalar('LOSS/{}'.format(phase), epoch_loss, epoch)
                 writer.add_scalar('ACC/{}'.format(phase), epoch_acc, epoch)
-                writer.add_scalar('OPTIM/LR', scheduler.get_lr()[-1], epoch)
 
             # deep copy the model
             if phase == 'val' and epoch_loss < best_loss:
