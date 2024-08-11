@@ -3,17 +3,19 @@ This module defines the model.
 """
 
 from torch import nn
-from torchvision.models import resnet18, ResNet18_Weights
+from torchvision.models import resnet34, ResNet34_Weights
+import torchsummary
 
 
-def get_resnet18(num_classes: int = 10) -> nn.Module:
+def get_model(num_classes: int = 10) -> nn.Module:
     """
-    Get the ResNet-18 model.
+    Get the model.
 
     :param num_classes: Number of classes for the output layer.
-    :return: ResNet-18 model.
+    :return: Pytorch model.
     """
-    model = resnet18(weights=ResNet18_Weights.DEFAULT)
+    model = resnet34(weights=ResNet34_Weights.DEFAULT)
     num_ftrs = model.fc.in_features
     model.fc = nn.Linear(num_ftrs, num_classes)
+    print(model)
     return model

@@ -4,6 +4,7 @@ This script defines the training function for our model.
 import copy
 import os
 import time
+import warnings
 
 import torch
 from torch import nn
@@ -19,7 +20,8 @@ def train(
         scheduler,
         device,
         run_name: str,
-        num_epochs: int = 10):
+        num_epochs: int = 10,
+        resume=False):
     """
     Train the model.
 
@@ -31,6 +33,7 @@ def train(
     :param device: Device for computation ('cpu' or 'cuda').
     :param run_name: Name of the run for saving model checkpoints.
     :param num_epochs: Number of training epochs.
+    :param resume: Resume training from the last checkpoint.
     :return: Best trained model.
     """
 
@@ -45,8 +48,23 @@ def train(
     best_loss = 1_000_000.
     best_acc = 0
     model.to(device)
+    epoch_start = 0
 
-    for epoch in range(num_epochs):
+    if resume:
+        print('Resume from the last checkpoint')
+        checkpoint_path = f'weights/{run_name}_best_model.pt'
+        try:
+            checkpoint = torch.load(checkpoint_path)
+            model.load_state_dict(checkpoint['model_state_dict'])
+            optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+            scheduler.load_state_dict(checkpoint['scheduler_state_dict'])
+            best_acc = checkpoint['accuracy']
+            epoch_start = checkpoint['epoch'] + 1
+            best_loss = checkpoint['loss']
+        except:
+            warnings.warn(f'Last Checkpoint not found: {checkpoint_path}')
+
+    for epoch in range(epoch_start, num_epochs):
         for phase in ['train', 'val']:
             if phase == 'train':
                 model.train()  # Set model to training mode
@@ -107,7 +125,7 @@ def train(
                 writer.add_scalar('ACC/{}'.format(phase), epoch_acc, epoch)
 
             # deep copy the model
-            if phase == 'val' and epoch_loss < best_loss:
+            if phase == 'val' and epoch_acc > best_acc:  # or loss
                 best_loss = epoch_loss
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
@@ -116,7 +134,8 @@ def train(
                     'model_state_dict': best_model_wts,
                     'optimizer_state_dict': optimizer.state_dict(),
                     'scheduler_state_dict': scheduler.state_dict(),
-                    'accuracy': best_acc
+                    'accuracy': best_acc,
+                    'loss': best_loss
                 }, f'weights/{run_name}_best_model.pt')
             pbar.close()
 
