@@ -5,6 +5,7 @@ import copy
 
 import torch
 from torch.ao import quantization as quan
+import torch.ao.quantization.quantize_fx as quantize_fx
 from data import load_data
 from tqdm import tqdm
 
@@ -96,7 +97,7 @@ def quantize_static(model: torch.nn.Module):
     return model_int8
 
 
-def quantization_static_fx(model_fp: torch.nn.Module):
+def quantize_static_fx(model_fp: torch.nn.Module):
     """
     Quantize a PyTorch model using static quantization with FX graph mode.
     :param model_fp: model to quantize
@@ -106,7 +107,7 @@ def quantization_static_fx(model_fp: torch.nn.Module):
     qconfig_mapping = quan.get_default_qconfig_mapping("x86")
     model_to_quantize.eval()
     # prepare
-    model_prepared = quan.quantize_fx.prepare_fx(model_to_quantize, qconfig_mapping, torch.rand((1, 3, 224, 224)))
+    model_prepared = quantize_fx.prepare_fx(model_to_quantize, qconfig_mapping, (torch.rand((1, 3, 224, 224)),))
     # calibrate
     dataloader = load_data()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -116,6 +117,6 @@ def quantization_static_fx(model_fp: torch.nn.Module):
             model_prepared(data.to(device))
     model_prepared.cpu()
     # quantize
-    model_quantized = quan.quantize_fx.convert_fx(model_prepared)
+    model_quantized = quantize_fx.convert_fx(model_prepared)
 
     return model_quantized

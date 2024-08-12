@@ -13,6 +13,7 @@ def validate(model, device):
     """
     Validate the model on the validation data.
 
+    :param device: cuda or cpu.
     :param model: Model to validate.
     :return: Tuple of accuracy, loss, and average inference time (ms).
     """
@@ -24,7 +25,7 @@ def validate(model, device):
     running_loss = 0.0
     start_time = time.time()
     i_data = 0
-    n_total = 100
+    n_total = 2000
     with torch.no_grad():
         for data in tqdm(dataloaders['val'], total=n_total, desc='Validating model', unit=' image'):
             images, labels = data[0].to(device), data[1].to(device)
@@ -47,34 +48,3 @@ def validate(model, device):
     avg_inference_time = elapsed_time / total
     return accuracy, loss, avg_inference_time * 1000
 
-
-def recall_precision(model, device):
-    """
-    Calculate the recall and precision of the model on the validation data.
-
-    :param model: Model to validate.
-    :param device: Device to run the model on.
-    :return: Tuple of recall and precision.
-    """
-    dataloaders = load_data(batch_size=128, num_workers=0)
-    model.eval()
-    correct = 0
-    total = 0
-    true_positive = 0
-    false_positive = 0
-    false_negative = 0
-    with torch.no_grad():
-        for data in dataloaders['val']:
-            images, labels = data[0].to(device), data[1].to(device)
-            outputs = model(images)
-            _, predicted = torch.max(outputs.data, 1)
-            total += labels.size(0)
-            correct += (predicted == labels).sum().item()
-
-            true_positive += ((predicted == 1) & (labels == 1)).sum().item()
-            false_positive += ((predicted == 1) & (labels == 0)).sum().item()
-            false_negative += ((predicted == 0) & (labels == 1)).sum().item()
-
-    recall = true_positive / (true_positive + false_negative)
-    precision = true_positive / (true_positive + false_positive)
-    return recall, precision

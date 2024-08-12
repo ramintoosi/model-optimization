@@ -6,7 +6,7 @@ from os.path import isfile
 import torch
 
 from model.resnet import get_model
-from quantization.post_training import quantize_dynamic, quantize_static, quantization_static_fx
+from quantization.post_training import quantize_dynamic, quantize_static, quantize_static_fx
 from validation import validate
 
 model = get_model(num_classes=10)
@@ -34,7 +34,7 @@ checkpoint_quantized_static_fx = "weights/quantized_static_fx_model.pt"
 if isfile(checkpoint_quantized_static_fx):
     model_quantized_static_fx = torch.jit.load(checkpoint_quantized_static_fx)
 else:
-    model_quantized_static_fx = quantize_static(model)
+    model_quantized_static_fx = quantize_static_fx(model)
     traced = torch.jit.trace(model_quantized_static_fx, torch.rand((1, 3, 224, 224)))
     torch.jit.save(traced, checkpoint_quantized_static_fx)
 
