@@ -14,19 +14,19 @@ def validate(model, device):
     Validate the model on the validation data.
 
     :param model: Model to validate.
-    :param device: Device to run the model on.
     :return: Tuple of accuracy, loss, and average inference time (ms).
     """
     dataloaders = load_data(batch_size=1, num_workers=0)
-    model.to(device)
     model.eval()
+    model.to(device)
     correct = 0
     total = 0
     running_loss = 0.0
     start_time = time.time()
     i_data = 0
+    n_total = 2000
     with torch.no_grad():
-        for data in tqdm(dataloaders['val'], total=2000):
+        for data in tqdm(dataloaders['val'], total=n_total):
             images, labels = data[0].to(device), data[1].to(device)
 
             outputs = model(images)
@@ -38,7 +38,7 @@ def validate(model, device):
 
             i_data += 1
 
-            if i_data > 2000:
+            if i_data > n_total:
                 break
 
     elapsed_time = time.time() - start_time
