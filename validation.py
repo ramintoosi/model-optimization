@@ -9,10 +9,11 @@ from tqdm import tqdm
 from data import load_data
 
 
-def validate(model, device):
+def validate(model, device, n_total=2000):
     """
     Validate the model on the validation data.
 
+    :param n_total: the number of images to validate.
     :param device: cuda or cpu.
     :param model: Model to validate.
     :return: Tuple of accuracy, loss, and average inference time (ms).
@@ -25,7 +26,6 @@ def validate(model, device):
     running_loss = 0.0
     start_time = time.time()
     i_data = 0
-    n_total = 2000
     with torch.no_grad():
         for data in tqdm(dataloaders['val'], total=n_total, desc='Validating model', unit=' image'):
             images, labels = data[0].to(device), data[1].to(device)
