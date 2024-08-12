@@ -1,6 +1,7 @@
 """
 This module implements post-training quantization of a PyTorch model.
 """
+import copy
 
 import torch
 from torch.ao import quantization as quan
@@ -12,6 +13,8 @@ from tqdm import tqdm
 # are quantized beforehand. This means that the quantization overhead occurs during the forward pass, but
 # since it happens on-the-fly, there's no additional pre-processing step needed.
 # Therefore, inference time remains unaffected.
+# This is used for situations where the model execution time is dominated by loading weights
+# from memory rather than computing the matrix multiplications.
 def quantize_dynamic(model_fp32: torch.nn.Module, dtype=torch.qint8):
     """
     Quantize a PyTorch model using dynamic quantization.
@@ -91,3 +94,28 @@ def quantize_static(model: torch.nn.Module):
     model_int8 = torch.ao.quantization.convert(model_fp32_prepared)
 
     return model_int8
+
+
+def quantization_static_fx(model_fp: torch.nn.Module):
+    """
+    Quantize a PyTorch model using static quantization with FX graph mode.
+    :param model_fp: model to quantize
+    :return: quantized model
+    """
+    model_to_quantize = copy.deepcopy(model_fp)
+    qconfig_mapping = quan.get_default_qconfig_mapping("x86")
+    model_to_quantize.eval()
+    # prepare
+    model_prepared = quan.quantize_fx.prepare_fx(model_to_quantize, qconfig_mapping, torch.rand((1, 3, 224, 224)))
+    # calibrate
+    dataloader = load_data()
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model_prepared.to(device)
+    with torch.no_grad():
+        for data, _ in tqdm(dataloader['train'], desc='Calibrating model FX', unit=' batch'):
+            model_prepared(data.to(device))
+    model_prepared.cpu()
+    # quantize
+    model_quantized = quan.quantize_fx.convert_fx(model_prepared)
+
+    return model_quantized

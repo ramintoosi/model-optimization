@@ -24,9 +24,9 @@ def validate(model, device):
     running_loss = 0.0
     start_time = time.time()
     i_data = 0
-    n_total = 2000
+    n_total = 100
     with torch.no_grad():
-        for data in tqdm(dataloaders['val'], total=n_total):
+        for data in tqdm(dataloaders['val'], total=n_total, desc='Validating model', unit=' image'):
             images, labels = data[0].to(device), data[1].to(device)
 
             outputs = model(images)
