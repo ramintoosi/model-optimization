@@ -2,21 +2,11 @@ import copy
 from os.path import isfile
 
 import torch
-import torch.nn.utils.prune as prune
 
 from validation import validate
 from model.resnet import get_model
 from quantization.post_training import quantize_static_fx
-
-
-def make_sparse(model_to_prune):
-    for name, module in model_to_prune.named_modules():
-        if isinstance(module, torch.nn.Conv2d):
-            prune.l1_unstructured(module, name='weight', amount=0.5)
-            prune.remove(module, 'weight')
-        elif isinstance(module, torch.nn.Linear):
-            prune.l1_unstructured(module, name='weight', amount=0.5)
-            prune.remove(module, 'weight')
+from prune import make_sparse
 
 
 model = get_model(num_classes=10)

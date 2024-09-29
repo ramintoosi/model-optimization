@@ -4,7 +4,6 @@ this module is used to train the model with QAT and pruning
 import os
 
 
-import torch.nn.utils.prune as prune
 import torch
 import torch.ao.quantization.quantize_fx as quantize_fx
 
@@ -13,16 +12,7 @@ from model.resnet import get_model
 from train import train
 from quantization.qat import prepare_model_qat
 from validation import validate
-
-
-def make_sparse(model_to_prune):
-    for name, module in model_to_prune.named_modules():
-        if isinstance(module, torch.nn.Conv2d):
-            prune.l1_unstructured(module, name='weight', amount=0.5)
-            prune.remove(module, 'weight')
-        elif isinstance(module, torch.nn.Linear):
-            prune.l1_unstructured(module, name='weight', amount=0.5)
-            prune.remove(module, 'weight')
+from prune import make_sparse
 
 
 def train_model_qat_prune(resume=True):

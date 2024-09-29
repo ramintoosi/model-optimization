@@ -13,10 +13,10 @@ Quantized static & 50% pruned: 0.93, loss: 0.19, inference time: 20.02ms
 
 QAT
 ```
-Quantized model (QAT) accuracy: 0.95, loss: 0.27, inference time: 21.57ms
+Quantized model (QAT) accuracy: 0.95, loss: 0.27, inference time: 19.87ms
 ```
 
 QAT-Prune
 ```
-Quantized model (QAT) accuracy: 0.95, loss: 0.25, inference time: 20.61ms
+Quantized model (QAT) + 0.5 prue accuracy: 0.95, loss: 0.25, inference time: 20.61ms
 ```
