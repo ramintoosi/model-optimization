@@ -18,8 +18,6 @@ def make_sparse(model_to_prune):
             prune.l1_unstructured(module, name='weight', amount=0.5)
             prune.remove(module, 'weight')
 
-    return model
-
 
 model = get_model(num_classes=10)
 checkpoint = "weights/original_model.pt"
@@ -31,7 +29,7 @@ checkpoint_quantized_prune = "weights/quantized_prune_model.pt"
 if isfile(checkpoint_quantized_prune):
     model_quantized_prune = torch.jit.load(checkpoint_quantized_prune)
 else:
-    model = make_sparse(model)
+    make_sparse(model)
     model_quantized_prune = quantize_static_fx(model)
     traced = torch.jit.trace(model_quantized_prune, torch.rand((1, 3, 224, 224)))
     torch.jit.save(traced, checkpoint_quantized_prune)
