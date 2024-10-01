@@ -4,6 +4,7 @@ This project demonstrates the process of quantization and pruning on a ResNet mo
 However, the project is only a simple implementation of the quantization and pruning techniques on a ResNet model for educational purposes. 
 
 [See my blog post for full description](https://ramintoosi.ir/posts/2024/10/blog-post-1/).
+
 ---
 
 
