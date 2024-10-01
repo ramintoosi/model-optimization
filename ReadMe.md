@@ -71,7 +71,7 @@ Results were obtained using an RTX 2080 Ti.
 
 | Model Type               | Accuracy | Loss | Inference Time  |
 |--------------------------|----------|------|-----------------|
-| Original model           | 0.9550   | 0.27 | 54.28ms         |
+| Original model           | 0.95     | 0.27 | 54.28ms         |
 | PTQ dynamic model        | 0.96     | 0.27 | 53.95ms         |
 | PTQ static model         | 0.95     | 0.28 | 22.96ms         |
 | PTQ static model with FX | 0.95     | 0.28 | 21.37ms         |
