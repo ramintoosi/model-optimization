@@ -6,6 +6,12 @@ import copy
 
 
 def prepare_model_qat(model_fp: nn.Module, example_inputs):
+    """
+    Prepare a model for quantization-aware training.
+    :param model_fp: the model to prepare
+    :param example_inputs: example inputs for the model
+    :return: prepared model
+    """
     model_to_quantize = copy.deepcopy(model_fp)
     qconfig_mapping = get_default_qat_qconfig_mapping("x86")
     model_to_quantize.train()
