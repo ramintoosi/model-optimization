@@ -67,16 +67,17 @@ python train_model_QAT_prune.py
 ```
 
 ## Results
+Results were obtained using an RTX 2080 Ti.
 
-| Model Type               | Accuracy | Loss | Inference Time |
-|--------------------------|----------|------|----------------|
-| Original model           | 0.9550   | 0.2713 | 54.28ms       |
-| PTQ dynamic model        | 0.96     | 0.27  | 53.95ms        |
-| PTQ static model         | 0.95     | 0.28  | 22.96ms        |
-| PTQ static model with FX | 0.95     | 0.28  | 21.37ms        |
-| Pruned 50% + PTQ static  | 0.93     | 0.19  | 20.02ms        |
-| QAT                      | 0.95     | 0.27  | 19.87ms        |
-| Pruned 50% + QAT         | 0.95     | 0.25  | 20.61ms        |
+| Model Type               | Accuracy | Loss | Inference Time  |
+|--------------------------|----------|------|-----------------|
+| Original model           | 0.9550   | 0.27 | 54.28ms         |
+| PTQ dynamic model        | 0.96     | 0.27 | 53.95ms         |
+| PTQ static model         | 0.95     | 0.28 | 22.96ms         |
+| PTQ static model with FX | 0.95     | 0.28 | 21.37ms         |
+| Pruned 50% + PTQ static  | 0.93     | 0.19 | 20.02ms         |
+| QAT                      | 0.95     | 0.27 | 19.87ms         |
+| Pruned 50% + QAT         | 0.95     | 0.25 | 20.61ms         |
 
 ## References
 - [PyTorch Quantization Documentation](https://pytorch.org/docs/stable/quantization.html)

@@ -1,6 +1,8 @@
-from typing import Optional, Any, Callable
+"""
+This module contains the ResNet model with one modification make it appropriate for quantization.
+"""
+from typing import Optional, Any
 
-import torch
 from torch import nn, Tensor
 from torchvision.models.resnet import ResNet34_Weights, ResNet, BasicBlock, _resnet
 from torch.nn.quantized import FloatFunctional
@@ -10,7 +12,7 @@ class QBasicBlock(BasicBlock):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.ff = FloatFunctional()
+        self.ff = FloatFunctional() # for quantization
 
     def forward(self, x: Tensor) -> Tensor:
         identity = x
@@ -40,7 +42,6 @@ def resnet34(*, weights: Optional[ResNet34_Weights] = None, progress: bool = Tru
 def get_model(num_classes: int = 10) -> nn.Module:
     """
     Get the model.
-
     :param num_classes: Number of classes for the output layer.
     :return: Pytorch model.
     """

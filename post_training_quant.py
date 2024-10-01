@@ -1,5 +1,6 @@
 """
 This module quantizes a PyTorch model using post-training quantization.
+Let's save the quantized models and compare the results with the original model.
 """
 from os.path import isfile
 

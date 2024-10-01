@@ -30,7 +30,11 @@ def quantize_dynamic(model_fp32: torch.nn.Module, dtype=torch.qint8):
         dtype=dtype)  # the target dtype for quantized weights
     return model_quantized
 
-
+# The ModelWrapper class is a custom PyTorch module designed to facilitate the quantization process.
+# It wraps an existing model and adds QuantStub and DeQuantStub modules to handle the conversion of tensors
+# between floating point and quantized formats. The forward method specifies where these conversions occur
+# during the forward pass of the model. This setup is essential for static quantization, where the model needs
+# to be prepared and calibrated before being converted to a quantized version.
 class ModelWrapper(torch.nn.Module):
     def __init__(self, model):
         super().__init__()

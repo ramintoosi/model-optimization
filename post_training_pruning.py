@@ -1,3 +1,6 @@
+"""
+This module quantizes a PyTorch model using post-training quantization and pruning.
+"""
 import copy
 from os.path import isfile
 
